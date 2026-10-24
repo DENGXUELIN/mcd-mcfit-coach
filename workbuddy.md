@@ -15,6 +15,8 @@
 4. **参赛落地页视觉**：在 Ardot 画布完成整页设计（Hero / 问题方案 / 三步流程 / 核心功能 / 报告预览 / 社会证明 / FAQ / CTA / 页脚）。
 5. **Skill 化**：补充 `SKILL.md`（含 `name` / `description` / `agent_created` 规范），并将项目安装为本地 WorkBuddy Skill（`.workbuddy/skills/mcfit-coach`）。
 6. **真实接入麦当劳 MCP 并跑通**（详见下方日志）：在用户配置好连接器后，使用 WorkBuddy 调用 3 个真实 MCP 工具，生成一份基于实时数据的「减脂期午餐」营养报告。
+7. **产品级网页版（PWA）**：将 demo 重构为完整单页产品（`webapp/`）——四视图架构（今日/配餐/报告/我的）、localStorage 持久化、智能推荐引擎（5400+ 组组合搜索）、Chart.js 图表、PWA 离线、71 个自动化测试断言。全程在 WorkBuddy 中开发、测试（Node 引擎单测 + DOM-stub UI 冒烟）、用 Chrome headless 截图验证、发布上线。
+8. **发布上线**：通过 WorkBuddy 发布能力部署为在线应用（https://mcfit-coach.app.workbuddy.host/?sharecode=YE4C4DCKKQ），线上零 console 错误验证通过。
 
 ## 真实 MCP 运行日志（2026-10-24，已接通 mcd-mcp）
 通过 WorkBuddy 调用麦当劳官方 MCP，全部返回真实数据：

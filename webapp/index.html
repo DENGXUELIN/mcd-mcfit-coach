@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>麦麦场景营养师 McFit Coach — 场景化点单 · 营养可视化</title>
+<meta name="description" content="输入场景和目标，结合麦当劳官方 MCP 实时营养数据，算出最划算又吃得安心的套餐，生成可视化营养报告。">
+<meta name="theme-color" content="#DA291C">
+<link rel="manifest" href="manifest.webmanifest">
+<script>
+/* 部署域带 sharecode 查询串时，让 manifest 请求继承它（须早于浏览器预取） */
+if (location.search) {
+  var m = document.querySelector('link[rel="manifest"]');
+  if (m && !m.getAttribute("href").includes("?")) m.setAttribute("href", m.getAttribute("href") + location.search);
+}
+</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23DA291C'/%3E%3Cpath d='M18 40V26l7 7 7-7v14M34 40V26l7 7 7-7v14' stroke='%23FFC72C' stroke-width='5' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">麦</div>
+    <div>
+      <h1>麦麦场景营养师</h1>
+      <div class="sub">McFit Coach · 场景化点单 × 营养可视化</div>
+    </div>
+  </div>
+  <div class="src-pill">🍔 麦当劳官方 MCP 数据 · 160 餐品快照</div>
+</header>
+
+<main class="app">
+  <section id="view-today" class="view"></section>
+  <section id="view-plan" class="view"></section>
+  <section id="view-report" class="view"></section>
+  <section id="view-me" class="view"></section>
+</main>
+
+<nav class="tabbar" id="tabbar">
+  <button data-nav="today"><span class="ic">🏠</span>今日</button>
+  <button data-nav="plan"><span class="ic">🍟</span>配餐</button>
+  <button data-nav="report"><span class="ic">📊</span>报告</button>
+  <button data-nav="me"><span class="ic">⚙️</span>我的</button>
+</nav>
+
+<div id="modal-root"></div>
+<div id="toast-root"></div>
+
+<script src="js/data.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/store.js"></script>
+<script>window.Views = {};</script>
+<script src="js/views/dashboard.js"></script>
+<script src="js/views/planner.js"></script>
+<script src="js/views/report.js"></script>
+<script src="js/views/profile.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

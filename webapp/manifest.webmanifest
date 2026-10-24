@@ -1,0 +1,18 @@
+{
+  "name": "麦麦场景营养师 McFit Coach",
+  "short_name": "麦麦营养师",
+  "description": "输入场景和目标，结合麦当劳官方 MCP 实时营养数据，算出最划算又吃得安心的套餐，生成可视化营养报告。",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#FFFDF7",
+  "theme_color": "#DA291C",
+  "lang": "zh-CN",
+  "categories": ["food", "health", "utilities"],
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

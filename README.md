@@ -38,4 +38,26 @@
 - `MCP_INTEGRATION.md` —— MCP 接入说明
 - `mcp-config.example.json` —— 脱敏配置示例（仅用环境变量占位符）
 - `workbuddy.md` —— WorkBuddy 开发对话上下文（领取积分奖励的门票）
+- `SKILL.md` —— Skill 清单（name / description / agent_created）
 - `src/report.html` —— 可视化营养报告页（可独立打开）
+- `webapp/` —— **麦麦场景营养师网页版**（产品级 PWA，见下）
+
+## 网页版（产品级 PWA）
+
+**在线体验：<https://mcfit-coach.app.workbuddy.host/?sharecode=YE4C4DCKKQ>**
+
+麦麦场景营养师不只是一个 Skill——`webapp/` 是一个完整的单页产品（纯静态、零后端、数据全本地）：
+
+- **四个视图**：今日仪表盘（营养进度环 / 连续记录）、配餐台（场景目标 / 菜单检索筛选 / 草稿组合）、报告中心（雷达图 / 供能占比 / 三态进度 / 营养师点评 / 7 日趋势）、我的（目标自定义 / 数据导出导入）
+- **智能推荐引擎**：按「主食 + 小食 + 零卡饮品」结构在 152 个真实餐品中搜索约 5400 组组合，以热量偏差、蛋白缺口、钠/脂肪超标为评分函数取最优（`js/engine.js`，5 个场景实测均精准命中目标 ±1%）
+- **真实数据**：152 个餐品营养数据来自麦当劳官方 MCP `list-nutrition-foods`（2026-10-24 实时快照），无任何虚构
+- **本地持久化**：localStorage 存储目标 / 草稿 / 历史记录，支持 JSON 导出导入
+- **PWA**：可安装到桌面/主屏，Service Worker 离线可用
+- **测试**：`webapp/tests/` 下 71 个断言（引擎 45 + UI 冒烟 26），`node webapp/tests/engine.test.js && node webapp/tests/ui.smoke.js`
+
+```bash
+# 本地运行
+cd webapp && python3 -m http.server 8901
+# 打开 http://127.0.0.1:8901
+```
+
