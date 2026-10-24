@@ -1,68 +1,114 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>麦麦场景营养师 · 营养报告</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-  <style>
-    :root { --bg:#0f1115; --card:#171a21; --accent:#ffc600; --ok:#34d399; --warn:#fbbf24; --bad:#f87171; --text:#e6e8eb; --muted:#9aa3af; }
-    * { box-sizing:border-box; }
-    body { margin:0; background:var(--bg); color:var(--text); font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; padding:32px; }
-    h1 { font-size:24px; margin:0 0 4px; }
-    .sub { color:var(--muted); margin-bottom:24px; }
-    .grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; max-width:980px; }
-    .card { background:var(--card); border:1px solid #232733; border-radius:16px; padding:20px; }
-    .card h2 { font-size:15px; margin:0 0 12px; color:var(--muted); font-weight:600; }
-    .bars div { margin:10px 0; }
-    .bars label { display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px; }
-    .track { height:10px; background:#232733; border-radius:6px; overflow:hidden; }
-    .fill { height:100%; border-radius:6px; }
-    .note { margin-top:16px; font-size:13px; color:var(--muted); line-height:1.6; }
-    .badge { display:inline-block; padding:2px 10px; border-radius:999px; font-size:12px; margin-left:8px; }
-    .badge.ok { background:rgba(52,211,153,.15); color:var(--ok); }
-    .badge.bad { background:rgba(248,113,113,.15); color:var(--bad); }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>麦麦场景营养师 · 营养报告（减脂期午餐）</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#0E1116; --card:#1A1F27; --text:#E6E8EB; --muted:#9AA3AF;
+    --red:#F87171; --green:#34D399; --amber:#FBBF24; --brand:#FFC72C;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;padding:32px;display:flex;justify-content:center}
+  .wrap{width:760px;max-width:100%}
+  .top{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:18px}
+  h1{font-size:24px;font-weight:700}
+  .sub{color:var(--muted);font-size:13px;margin-top:4px}
+  .badge{background:#171A21;border:1px solid #2A2F3A;color:var(--brand);font-size:12px;padding:6px 12px;border-radius:999px}
+  .row{display:flex;gap:18px;flex-wrap:wrap}
+  .card{background:var(--card);border:1px solid #2A2F3A;border-radius:16px;padding:22px}
+  .radar{flex:1;min-width:300px}
+  .bars{flex:1;min-width:300px}
+  .card h2{font-size:15px;color:var(--muted);font-weight:600;margin-bottom:14px}
+  .bar{margin-bottom:16px}
+  .bar .lab{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px}
+  .bar .lab b{font-weight:600}
+  .track{height:10px;background:#2A2F3A;border-radius:6px;overflow:hidden}
+  .fill{height:10px;border-radius:6px}
+  .ok{background:var(--green)} .warn{background:var(--amber)} .bad{background:var(--red)}
+  .note{background:#171A21;border-radius:12px;padding:14px 16px;margin-top:18px;font-size:13px;color:var(--muted);line-height:1.6}
+  .note b{color:var(--text)}
+  table{width:100%;border-collapse:collapse;margin-top:18px;font-size:13px}
+  th,td{text-align:left;padding:10px 8px;border-bottom:1px solid #2A2F3A}
+  th{color:var(--muted);font-weight:600}
+  .foot{color:#6B6760;font-size:11px;margin-top:22px;text-align:center;line-height:1.6}
+</style>
 </head>
 <body>
-  <h1>麦麦场景营养师 · 营养报告</h1>
-  <div class="sub">场景：减脂期 · 目标 ≤600kcal / 蛋白充足 · 数据以麦当劳官方实时结果为准</div>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <h1>营养报告 · 减脂期午餐</h1>
+      <div class="sub">目标 ≤600 kcal · 蛋白 ≥30 g · 钠 ≤1000 mg ｜ 数据来自麦当劳官方 MCP 实时返回</div>
+    </div>
+    <div class="badge">McFit Coach</div>
+  </div>
 
-  <div class="grid">
-    <div class="card">
-      <h2>营养雷达（钠超标时自然内凹）</h2>
-      <canvas id="radar" height="220"></canvas>
+  <div class="row">
+    <div class="card radar">
+      <h2>营养结构雷达（以目标为基准，1.0 = 达标）</h2>
+      <canvas id="radar" height="260"></canvas>
     </div>
-    <div class="card">
-      <h2>三餐热量分布</h2>
-      <canvas id="donut" height="220"></canvas>
-    </div>
-    <div class="card" style="grid-column:1 / -1;">
-      <h2>目标达成进度</h2>
-      <div class="bars">
-        <div><label>热量 <span>548 / 600 kcal</span></label><div class="track"><div class="fill" style="width:91%;background:var(--ok)"></div></div></div>
-        <div><label>蛋白质 <span>38 / 35 g</span></label><div class="track"><div class="fill" style="width:100%;background:var(--ok)"></div></div></div>
-        <div><label>钠 <span>1180 / 1000 mg</span></label><div class="track"><div class="fill" style="width:100%;background:var(--bad)"></div></div></div>
+    <div class="card bars">
+      <h2>三项核心指标达成</h2>
+      <div class="bar">
+        <div class="lab"><span>热量</span><b>585 / 600 kcal</b></div>
+        <div class="track"><div class="fill ok" style="width:97%"></div></div>
       </div>
-      <div class="note">营养师点评：蛋白达标 ✓；钠轻微超标，建议次日选品控盐。<span class="badge bad">钠超标</span></div>
+      <div class="bar">
+        <div class="lab"><span>蛋白质</span><b>32 / 30 g</b></div>
+        <div class="track"><div class="fill ok" style="width:100%"></div></div>
+      </div>
+      <div class="bar">
+        <div class="lab"><span>钠</span><b>1074 / 1000 mg</b></div>
+        <div class="track"><div class="fill bad" style="width:100%"></div></div>
+      </div>
+      <div class="note">
+        <b>营养师点评：</b>热量与蛋白双双达标 ✓；钠轻微超标（1074 mg，红），主要来自两款含酱/腌制的堡类。
+        你卡包里有「11.9 元麦辣鸡腿堡」券，但单品钠高达 1208 mg、热量 485 kcal，<b>减脂期不建议为用券而选它</b>。
+        次日建议控盐、多喝水。
+      </div>
     </div>
   </div>
 
-  <script>
-    new Chart(document.getElementById('radar'), {
-      type:'radar',
-      data:{ labels:['热量','蛋白质','膳食纤维','钙','铁','维生素C'],
-        datasets:[{ data:[548,38,6,220,3.2,18], fill:true,
-          backgroundColor:'rgba(255,198,0,.18)', borderColor:'#ffc600' }] },
-      options:{ scales:{ r:{ grid:{color:'#2a2f3a'}, angleLines:{color:'#2a2f3a'},
-        pointLabels:{color:'#9aa3af'}, ticks:{display:false} } }, plugins:{legend:{display:false}} }
-    });
-    new Chart(document.getElementById('donut'), {
-      type:'doughnut',
-      data:{ labels:['早餐','午餐','晚餐'], datasets:[{ data:[120,328,100],
-        backgroundColor:['#ffc600','#34d399','#60a5fa'] }] },
-      options:{ plugins:{legend:{position:'bottom',labels:{color:'#9aa3af'}}} }
-    });
-  </script>
+  <table>
+    <thead><tr><th>餐品</th><th>热量(kcal)</th><th>蛋白(g)</th><th>脂肪(g)</th><th>碳水(g)</th><th>钠(mg)</th></tr></thead>
+    <tbody>
+      <tr><td>麦香鱼</td><td>325</td><td>16</td><td>13</td><td>35</td><td>556</td></tr>
+      <tr><td>烟肉蛋麦满分</td><td>260</td><td>16</td><td>10</td><td>24</td><td>483</td></tr>
+      <tr><td>无糖可口可乐(中杯)</td><td>0</td><td>0</td><td>0</td><td>1</td><td>35</td></tr>
+      <tr><td><b>合计</b></td><td><b>585</b></td><td><b>32</b></td><td><b>23</b></td><td><b>60</b></td><td><b>1074</b></td></tr>
+    </tbody>
+  </table>
+
+  <div class="foot">
+    本报告由「麦麦场景营养师 / McFit Coach」基于麦当劳官方 MCP（list-nutrition-foods）实时营养数据生成，仅作饮食参考，不构成医疗或营养建议。<br/>
+    餐品与营养信息以麦当劳官方渠道实时结果为准。
+  </div>
+</div>
+
+<script>
+  const ctx = document.getElementById('radar');
+  new Chart(ctx, {
+    type:'radar',
+    data:{
+      labels:['热量','蛋白','脂肪','碳水','钠'],
+      datasets:[
+        {label:'本餐 / 目标', data:[0.975,1.067,0.329,0.60,1.074],
+         borderColor:'#FFC72C', backgroundColor:'rgba(255,199,44,.18)', pointBackgroundColor:'#FFC72C', borderWidth:2},
+        {label:'目标基准', data:[1,1,1,1,1],
+         borderColor:'#9AA3AF', backgroundColor:'rgba(154,163,175,.08)', borderDash:[4,4], pointBackgroundColor:'#9AA3AF', borderWidth:1}
+      ]
+    },
+    options:{
+      responsive:true,
+      scales:{r:{min:0,max:1.2,grid:{color:'#2A2F3A'},angleLines:{color:'#2A2F3A'},
+        pointLabels:{color:'#E6E8EB',font:{size:12}},ticks:{display:false,backdropColor:'transparent'}}},
+      plugins:{legend:{labels:{color:'#E6E8EB',font:{size:12}}}}
+    }
+  });
+</script>
 </body>
 </html>
