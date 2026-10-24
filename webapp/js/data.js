@@ -66,12 +66,12 @@ const CATS = ["汉堡", "早餐", "小食", "甜品", "饮料", "套餐"];
 
 /* 场景 = 目标模板。点击场景把目标应用到当前方案；之后可手动微调。 */
 const SCENARIOS = {
-  diet:      { e: "🥗", n: "减脂期",   d: "控热量 · 保蛋白 · 少盐",   goals: { kcal: 600, protein: 30, fat: 20, sodium: 1000, calcium: 300 } },
-  kids:      { e: "👶", n: "带娃出行", d: "营养均衡 · 口味温和",     goals: { kcal: 500, protein: 20, fat: 22, sodium: 800,  calcium: 250 } },
-  overtime:  { e: "🌙", n: "加班宵夜", d: "轻负担 · 好消化",         goals: { kcal: 400, protein: 12, fat: 15, sodium: 900,  calcium: 150 } },
-  fitness:   { e: "💪", n: "健身后",   d: "高蛋白 · 补能量",         goals: { kcal: 700, protein: 35, fat: 25, sodium: 1500, calcium: 300 } },
-  snack:     { e: "🍿", n: "追剧夜宵", d: "解馋不超标 · 小份",       goals: { kcal: 300, protein: 8,  fat: 15, sodium: 600,  calcium: 100 } },
-  custom:    { e: "🎛️", n: "自定义",   d: "按自己的目标来",           goals: null }
+  diet:      { n: "减脂期",   d: "控热量 · 保蛋白 · 少盐",   goals: { kcal: 600, protein: 30, fat: 20, sodium: 1000, calcium: 300 } },
+  kids:      { n: "带娃出行", d: "营养均衡 · 口味温和",     goals: { kcal: 500, protein: 20, fat: 22, sodium: 800,  calcium: 250 } },
+  overtime:  { n: "加班宵夜", d: "轻负担 · 好消化",         goals: { kcal: 400, protein: 12, fat: 15, sodium: 900,  calcium: 150 } },
+  fitness:   { n: "健身后",   d: "高蛋白 · 补能量",         goals: { kcal: 700, protein: 35, fat: 25, sodium: 1500, calcium: 300 } },
+  snack:     { n: "追剧夜宵", d: "解馋不超标 · 小份",       goals: { kcal: 300, protein: 8,  fat: 15, sodium: 600,  calcium: 100 } },
+  custom:    { n: "自定义",   d: "按自己的目标来",           goals: null }
 };
 
 /* 营养筛选标签（全部基于真实营养字段，不虚构） */

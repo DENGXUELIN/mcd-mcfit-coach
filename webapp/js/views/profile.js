@@ -13,6 +13,16 @@ Views.profile = (() => {
 
     el.innerHTML = `
       <div class="card">
+        <div class="card-b flex" style="gap:13px">
+          <div class="logo" style="width:46px;height:46px;border-radius:13px;font-size:21px">麦</div>
+          <div style="min-width:0">
+            <div style="font-weight:800;font-size:15.5px;letter-spacing:-.01em">麦麦场景营养师</div>
+            <div class="text-muted" style="margin-top:2px">McFit Coach · v1.0.0 · 场景化点单 × 营养可视化</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
         <div class="card-h"><h2>默认营养目标</h2><span class="hint">新方案与应用此目标</span></div>
         <div class="card-b">
           <div class="goal-grid">

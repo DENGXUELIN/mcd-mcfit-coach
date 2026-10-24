@@ -14,8 +14,8 @@ Views.planner = (() => {
       <div class="sec-title">1 · 选择场景与目标</div>
       <div class="scen-scroll">
         ${Object.entries(SCENARIOS).map(([k, s]) => `
-          <button class="scen-chip ${d.scenarioKey === k ? "on" : ""}" data-act="scenario" data-key="${k}">
-            <span class="n">${s.n}</span><span class="g">${s.goals ? "≤ " + s.goals.kcal + " kcal" : "自定义"}</span>
+          <button class="scen-chip s-${k} ${d.scenarioKey === k ? "on" : ""}" data-act="scenario" data-key="${k}">
+            <span class="n"><span class="dot"></span>${s.n}</span><span class="g">${s.goals ? "≤ " + s.goals.kcal + " kcal" : "自定义"}</span>
           </button>`).join("")}
       </div>
 
@@ -113,7 +113,7 @@ Views.planner = (() => {
       const on = Store.draft.items.some(i => i.name === m.name);
       const tags = Object.entries(FILTERS).filter(([, f]) => f.t(m)).map(([k, f]) => `<span class="tag">${f.n}</span>`).join("");
       html += `<div class="menu-item ${on ? "on" : ""}" data-name="${m.name}" data-act="add">
-        <div class="chk">${on ? "✓" : ""}</div>
+        <div class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></div>
         <div class="nm">${m.name}<span class="tags">${tags}</span></div>
         <div class="kc">${m.kcal} kcal</div>
       </div>`;
@@ -134,6 +134,7 @@ Views.planner = (() => {
       </div>`;
     } else {
       const t = Engine.totals(d.items);
+      const vK = Engine.verdict("kcal", t.kcal, d.goals.kcal);
       box.innerHTML = d.items.map(it => {
         const m = MENU_BY_NAME[it.name];
         const sub = m ? `${m.kcal * it.qty} kcal · 蛋白 ${m.protein * it.qty}g · 钠 ${m.sodium * it.qty}mg` : "";
@@ -144,7 +145,7 @@ Views.planner = (() => {
             <span class="q">${it.qty}</span>
             <button data-act="setQty" data-name="${it.name}" data-qty="${it.qty + 1}">+</button>
           </div>
-          <button class="del" data-act="remove" data-name="${it.name}" title="移除">×</button>
+          <button class="del" data-act="remove" data-name="${it.name}" title="移除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
         </div>`;
       }).join("") + `
         <div class="mt14">
@@ -154,14 +155,13 @@ Views.planner = (() => {
         </div>
         <div class="draft-total mt14">
           <div><div class="big">${t.kcal}</div><div class="lab">总热量 kcal</div></div>
+          <div class="delta ${vK}">${vK === "bad" ? "已超 " + (t.kcal - d.goals.kcal) + " kcal" : "还可 " + Math.max(0, d.goals.kcal - t.kcal) + " kcal"}</div>
           <div style="text-align:right"><div class="big" style="font-size:17px">${t.protein}g</div><div class="lab">蛋白质</div></div>
         </div>`;
     }
-    // 刷新左侧选中态（不重建 DOM，保滚动）
+    // 刷新左侧选中态（不重建 DOM，保滚动；勾选图标显隐由 CSS 控制）
     document.querySelectorAll(".menu-item").forEach(el => {
       el.classList.toggle("on", d.items.some(i => i.name === el.dataset.name));
-      const chk = el.querySelector(".chk");
-      if (chk) chk.textContent = el.classList.contains("on") ? "✓" : "";
     });
   }
 
@@ -179,7 +179,7 @@ Views.planner = (() => {
   function patch() {
     patchDraft();
     // 同步场景选中态与目标展示值
-    document.querySelectorAll(".scen").forEach(b =>
+    document.querySelectorAll(".scen-chip").forEach(b =>
       b.classList.toggle("on", b.dataset.key === Store.draft.scenarioKey));
     document.querySelectorAll("[data-goal]").forEach(inp => {
       if (document.activeElement !== inp) inp.value = Store.draft.goals[inp.dataset.goal] || 0;

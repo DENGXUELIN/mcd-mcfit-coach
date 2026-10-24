@@ -126,7 +126,7 @@ Views.report = (() => {
           <div class="btn-row mt14 no-print">
             <button class="btn btn-g" data-act="printReport">打印 / 存 PDF</button>
             <button class="btn btn-line" data-act="copyReport">复制文字版</button>
-            ${src.isDraft ? "" : `<button class="btn btn-line" style="color:var(--bad)" data-act="delRecord" data-id="${src.id}">🗑 删除记录</button>`}
+            ${src.isDraft ? "" : `<button class="btn btn-line" style="color:var(--bad)" data-act="delRecord" data-id="${src.id}">删除记录</button>`}
           </div>
         </div>
       </div>
@@ -181,15 +181,15 @@ Views.report = (() => {
         labels: ["热量", "蛋白质", "脂肪", "钠"],
         datasets: [
           { label: "本餐 / 目标", data: [ratio(t.kcal / g.kcal), ratio(t.protein / g.protein), ratio(t.fat / g.fat), ratio(t.sodium / g.sodium)],
-            borderColor: "#DA291C", backgroundColor: "rgba(218,41,28,.14)", pointBackgroundColor: "#DA291C", borderWidth: 2 },
-          { label: "目标基准", data: [1, 1, 1, 1], borderColor: "#9AA3AF", backgroundColor: "rgba(154,163,175,.05)", borderDash: [4, 4], pointRadius: 0, borderWidth: 1 }
+            borderColor: "#DA291C", backgroundColor: "rgba(218,41,28,.12)", pointBackgroundColor: "#DA291C", borderWidth: 2 },
+          { label: "目标基准", data: [1, 1, 1, 1], borderColor: "#C9C8C2", backgroundColor: "rgba(154,163,175,.05)", borderDash: [4, 4], pointRadius: 0, borderWidth: 1 }
         ]
       },
       options: {
         responsive: true,
-        scales: { r: { min: 0, max: 1.4, grid: { color: "#EAE4D9" }, angleLines: { color: "#EAE4D9" },
-          pointLabels: { color: "#14110F", font: { size: 12, weight: "600" } }, ticks: { display: false } } },
-        plugins: { legend: { labels: { color: "#6B6760", font: { size: 11 }, boxWidth: 12 } } }
+        scales: { r: { min: 0, max: 1.4, grid: { color: "#EAE9E4" }, angleLines: { color: "#EAE9E4" },
+          pointLabels: { color: "#1B1B1B", font: { size: 12, weight: "600" } }, ticks: { display: false } } },
+        plugins: { legend: { labels: { color: "#75746F", font: { size: 11 }, boxWidth: 12 } } }
       }
     }));
 
@@ -202,9 +202,9 @@ Views.report = (() => {
         const x = (chartArea.left + chartArea.right) / 2, y = (chartArea.top + chartArea.bottom) / 2;
         ctx.save();
         ctx.textAlign = "center"; ctx.textBaseline = "middle";
-        ctx.fillStyle = "#14110F"; ctx.font = "800 21px " + Chart.defaults.font.family;
+        ctx.fillStyle = "#1B1B1B"; ctx.font = "800 21px " + Chart.defaults.font.family;
         ctx.fillText(t.kcal + "", x, y - 8);
-        ctx.fillStyle = "#9AA3AF"; ctx.font = "600 10px " + Chart.defaults.font.family;
+        ctx.fillStyle = "#75746F"; ctx.font = "600 10px " + Chart.defaults.font.family;
         ctx.fillText("kcal 总热量", x, y + 13);
         ctx.restore();
       }
@@ -215,14 +215,14 @@ Views.report = (() => {
         labels: ["蛋白质", "脂肪", "碳水"],
         datasets: [{
           data: [pK, pF, pC],
-          backgroundColor: ["#16A34A", "#F59E0B", "#3B82F6"],
+          backgroundColor: ["#0E9F5A", "#F5A623", "#3E7BFA"],
           borderWidth: 2, borderColor: "#fff", hoverOffset: 6
         }]
       },
       options: {
         responsive: true, cutout: "68%",
         plugins: {
-          legend: { position: "bottom", labels: { color: "#6B6760", font: { size: 11 }, boxWidth: 12 } },
+          legend: { position: "bottom", labels: { color: "#75746F", font: { size: 11 }, boxWidth: 12 } },
           tooltip: { callbacks: { label: c => ` ${c.label} ${Math.round(c.raw / pAll * 100)}%（${Math.round(c.raw)} kcal）` } }
         }
       },
@@ -236,11 +236,11 @@ Views.report = (() => {
       responsive: true,
       interaction: { mode: "index", intersect: false },
       scales: {
-        x: { grid: { display: false }, ticks: { color: "#9AA3AF", font: { size: 10 } } },
-        y: { beginAtZero: true, grid: { color: "#F1EDE4" }, ticks: { color: "#9AA3AF", font: { size: 10 } } }
+        x: { grid: { display: false }, ticks: { color: "#ABA9A3", font: { size: 10 } } },
+        y: { beginAtZero: true, grid: { color: "#EFEEE9" }, ticks: { color: "#ABA9A3", font: { size: 10 } } }
       },
       plugins: {
-        legend: { labels: { color: "#6B6760", font: { size: 10 }, boxWidth: 12 } },
+        legend: { labels: { color: "#75746F", font: { size: 10 }, boxWidth: 12 } },
         tooltip: { callbacks: { label: c => ` ${c.dataset.label}: ${Math.round(c.raw)}` } }
       }
     });
@@ -251,8 +251,8 @@ Views.report = (() => {
         labels: days,
         datasets: [
           { label: "热量 kcal", data: trend.map(d => d.hasData ? d.kcal : null), borderColor: "#DA291C",
-            backgroundColor: "rgba(218,41,28,.08)", fill: true, tension: .3, spanGaps: true, pointRadius: 4, pointBackgroundColor: "#DA291C" },
-          { label: "目标 kcal", data: trend.map(d => d.goalKcal || null), borderColor: "#9AA3AF",
+            backgroundColor: "rgba(218,41,28,.07)", fill: true, tension: .3, spanGaps: true, pointRadius: 4, pointBackgroundColor: "#DA291C" },
+          { label: "目标 kcal", data: trend.map(d => d.goalKcal || null), borderColor: "#C9C8C2",
             borderDash: [5, 4], pointRadius: 0, tension: 0 }
         ]
       },
@@ -264,8 +264,8 @@ Views.report = (() => {
       data: {
         labels: days,
         datasets: [
-          { label: "钠 mg", data: trend.map(d => d.hasData ? d.sodium : null), backgroundColor: trend.map(d => d.goalSodium && d.sodium > d.goalSodium ? "#F87171" : "#34D399"), borderRadius: 5, barPercentage: .6 },
-          { label: "上限 mg", data: trend.map(d => d.goalSodium || null), type: "line", borderColor: "#9AA3AF", borderDash: [5, 4], pointRadius: 0, tension: 0 }
+          { label: "钠 mg", data: trend.map(d => d.hasData ? d.sodium : null), backgroundColor: trend.map(d => d.goalSodium && d.sodium > d.goalSodium ? "#E8635A" : "#35A96F"), borderRadius: 5, barPercentage: .6 },
+          { label: "上限 mg", data: trend.map(d => d.goalSodium || null), type: "line", borderColor: "#C9C8C2", borderDash: [5, 4], pointRadius: 0, tension: 0 }
         ]
       },
       options: lineOpts()
