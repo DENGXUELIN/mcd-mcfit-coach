@@ -14,12 +14,12 @@ Views.report = (() => {
 
     // 选择器：草稿 + 最近记录
     const options = [];
-    if (draft.items.length) options.push({ id: null, label: "🧺 当前草稿" });
+    if (draft.items.length) options.push({ id: null, label: "当前草稿" });
     recs.slice(0, 12).forEach(r => {
       const dt = new Date(r.ts);
       options.push({
         id: r.id,
-        label: `${(SCENARIOS[r.scenarioKey] || SCENARIOS.custom).e} ${dt.getMonth() + 1}/${dt.getDate()} ${String(dt.getHours()).padStart(2, "0")}:${String(dt.getMinutes()).padStart(2, "0")} · ${r.totals.kcal}kcal`
+        label: `${dt.getMonth() + 1}/${dt.getDate()} ${String(dt.getHours()).padStart(2, "0")}:${String(dt.getMinutes()).padStart(2, "0")} · ${r.totals.kcal} kcal`
       });
     });
 
@@ -28,7 +28,6 @@ Views.report = (() => {
         <div class="card">
           <div class="card-b">
             <div class="empty">
-              <div class="ill">📊</div>
               <div class="t">还没有可报告的数据</div>
               <div class="d">去配餐台组合一份套餐并保存，这里就会生成完整营养报告</div>
               <button class="btn btn-r" data-act="nav" data-view="plan">去配餐</button>
@@ -68,7 +67,6 @@ Views.report = (() => {
       <div class="card mt14">
         <div class="card-b">
           <div class="report-head">
-            <div class="e">${sc.e}</div>
             <div class="t">
               <h3>${sc.n}营养报告 ${src.isDraft ? "（草稿）" : ""}</h3>
               <div class="d">${dt.getFullYear()} 年 ${dt.getMonth() + 1} 月 ${dt.getDate()} 日 ${String(dt.getHours()).padStart(2, "0")}:${String(dt.getMinutes()).padStart(2, "0")} · ${src.items.length} 件餐品</div>
@@ -102,9 +100,9 @@ Views.report = (() => {
         </div>
         <div class="card-b" style="border-top:1px solid var(--line)">
           <div class="note-dark">
-            <b>🍔 营养师点评</b><br/>
-            ${notes.map(n => `<span class="t-${n.t}">${n.t === "good" ? "✓" : n.t === "bad" ? "✗" : n.t === "warn" ? "△" : "💡"}</span> ${n.x}`).join("<br/>")}
-            ${actions.length ? `<div class="actions">👉 下一步：<br/>${actions.map(a => "· " + a).join("<br/>")}</div>` : ""}
+            <b>营养师点评</b><br/>
+            ${notes.map(n => `<span class="t-${n.t}">${n.t === "good" ? "√" : n.t === "bad" ? "×" : n.t === "warn" ? "!" : "·"}</span> ${n.x}`).join("<br/>")}
+            ${actions.length ? `<div class="actions">下一步：<br/>${actions.map(a => "· " + a).join("<br/>")}</div>` : ""}
           </div>
         </div>
         <div class="card-b" style="border-top:1px solid var(--line)">
@@ -126,8 +124,8 @@ Views.report = (() => {
             </table>
           </div>
           <div class="btn-row mt14 no-print">
-            <button class="btn btn-g" data-act="printReport">🖨️ 打印 / 存 PDF</button>
-            <button class="btn btn-line" data-act="copyReport">📋 复制文字版</button>
+            <button class="btn btn-g" data-act="printReport">打印 / 存 PDF</button>
+            <button class="btn btn-line" data-act="copyReport">复制文字版</button>
             ${src.isDraft ? "" : `<button class="btn btn-line" style="color:var(--bad)" data-act="delRecord" data-id="${src.id}">🗑 删除记录</button>`}
           </div>
         </div>

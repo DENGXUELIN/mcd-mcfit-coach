@@ -14,14 +14,14 @@ Views.planner = (() => {
       <div class="sec-title">1 · 选择场景与目标</div>
       <div class="scen-scroll">
         ${Object.entries(SCENARIOS).map(([k, s]) => `
-          <button class="scen ${d.scenarioKey === k ? "on" : ""}" data-act="scenario" data-key="${k}">
-            <div class="e">${s.e}</div><div class="n">${s.n}</div><div class="d">${s.d}</div>
+          <button class="scen-chip ${d.scenarioKey === k ? "on" : ""}" data-act="scenario" data-key="${k}">
+            <span class="n">${s.n}</span><span class="g">${s.goals ? "≤ " + s.goals.kcal + " kcal" : "自定义"}</span>
           </button>`).join("")}
       </div>
 
       <div class="card">
         <div class="card-h">
-          <h2>🎯 营养目标</h2>
+          <h2>营养目标</h2>
           <button class="btn btn-line btn-sm" data-act="editGoals">编辑目标</button>
         </div>
         <div class="card-b">
@@ -40,7 +40,7 @@ Views.planner = (() => {
         <div class="card">
           <div class="card-h" style="flex-direction:column;align-items:stretch;gap:10px">
             <div class="menu-tools">
-              <div class="search-box"><input id="menu-q" type="text" placeholder="搜索餐品，如「板烧」「无糖」" value="${escapeHtml(ui.q)}"></div>
+              <div class="search-box"><svg class="mag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="menu-q" type="text" placeholder="搜索餐品，如「板烧」「无糖」" value="${escapeHtml(ui.q)}"></div>
               <select class="sel" id="menu-cat">
                 <option value="全部">全部分类</option>
                 ${CATS.map(c => `<option ${ui.cat === c ? "selected" : ""}>${c}</option>`).join("")}
@@ -55,14 +55,14 @@ Views.planner = (() => {
         </div>
 
         <div class="card plan-summary">
-          <div class="card-h"><h2>🧺 当前方案</h2><span class="hint" id="draft-count">${d.items.length} 件</span></div>
+          <div class="card-h"><h2>当前方案</h2><span class="hint" id="draft-count">${d.items.length} 件</span></div>
           <div class="card-b">
             <div id="draft-box"></div>
             <div class="btn-row mt14">
-              <button class="btn btn-y" data-act="reco" style="flex:1">✨ 智能推荐</button>
+              <button class="btn btn-y" data-act="reco" style="flex:1">智能推荐</button>
               <button class="btn btn-g" data-act="clearDraft">清空</button>
             </div>
-            <button class="btn btn-r btn-block mt8" data-act="saveRecord">💾 保存为记录</button>
+            <button class="btn btn-r btn-block mt8" data-act="saveRecord">保存为记录</button>
           </div>
         </div>
       </div>
@@ -118,7 +118,7 @@ Views.planner = (() => {
         <div class="kc">${m.kcal} kcal</div>
       </div>`;
     });
-    box.innerHTML = items.length ? html : `<div class="empty"><div class="ill">🔍</div><div class="t">没有匹配的餐品</div><div class="d">换个关键词，或清除筛选标签</div></div>`;
+    box.innerHTML = items.length ? html : `<div class="empty"><div class="t">没有匹配的餐品</div><div class="d">换个关键词，或清除筛选标签</div></div>`;
   }
 
   function patchDraft() {
@@ -128,9 +128,9 @@ Views.planner = (() => {
     document.getElementById("draft-count").textContent = d.items.length + " 件";
     if (!d.items.length) {
       box.innerHTML = `<div class="empty" style="padding:26px 10px">
-        <div class="ill">🧺</div>
+
         <div class="t">方案还是空的</div>
-        <div class="d">从左侧点选餐品，或点「✨ 智能推荐」一键生成</div>
+        <div class="d">从左侧点选餐品，或用「智能推荐」一键生成</div>
       </div>`;
     } else {
       const t = Engine.totals(d.items);
@@ -144,7 +144,7 @@ Views.planner = (() => {
             <span class="q">${it.qty}</span>
             <button data-act="setQty" data-name="${it.name}" data-qty="${it.qty + 1}">+</button>
           </div>
-          <button class="del" data-act="remove" data-name="${it.name}" title="移除">✕</button>
+          <button class="del" data-act="remove" data-name="${it.name}" title="移除">×</button>
         </div>`;
       }).join("") + `
         <div class="mt14">

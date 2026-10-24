@@ -77,7 +77,7 @@ ok(typeof Views.report.render === "function", "report.render");
 ok(typeof Views.profile.render === "function", "profile.render");
 
 /* ---------- 流程 1：空状态四视图 ---------- */
-try { Views.today.render(); ok(els["view-today"].innerHTML.includes("今天还没有配餐记录"), "今日空状态引导"); } catch (e) { ok(false, "today.render: " + e.message); }
+try { Views.today.render(); ok(els["view-today"].innerHTML.includes("今天还没有记录"), "今日空状态引导"); } catch (e) { ok(false, "today.render: " + e.message); }
 try { Views.planner.render(); ok(els["view-plan"].innerHTML.includes("draft-box"), "配餐台结构"); ok(els["draft-box"].innerHTML.includes("方案还是空的"), "配餐台空状态（draft-box）"); } catch (e) { ok(false, "planner.render: " + e.message); }
 try { Views.report.render(); ok(els["view-report"].innerHTML.includes("还没有可报告的数据"), "报告空状态"); } catch (e) { ok(false, "report.render: " + e.message); }
 try { Views.profile.render(); ok(els["view-me"].innerHTML.includes("默认营养目标"), "我的页"); } catch (e) { ok(false, "profile.render: " + e.message); }

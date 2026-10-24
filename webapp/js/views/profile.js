@@ -13,7 +13,7 @@ Views.profile = (() => {
 
     el.innerHTML = `
       <div class="card">
-        <div class="card-h"><h2>⚙️ 默认营养目标</h2><span class="hint">新方案与应用此目标</span></div>
+        <div class="card-h"><h2>默认营养目标</h2><span class="hint">新方案与应用此目标</span></div>
         <div class="card-b">
           <div class="goal-grid">
             ${cell("热量上限", "kcal", p.goals.kcal, "kcal")}
@@ -28,22 +28,22 @@ Views.profile = (() => {
       </div>
 
       <div class="card">
-        <div class="card-h"><h2>💾 数据管理</h2><span class="hint">所有数据仅存于本机浏览器</span></div>
+        <div class="card-h"><h2>数据管理</h2><span class="hint">所有数据仅存于本机浏览器</span></div>
         <div class="card-b">
           <div class="kv"><span class="k">配餐记录</span><span class="v">${recs.length} 条</span></div>
           <div class="kv"><span class="k">开始记录于</span><span class="v">${firstTs ? new Date(firstTs).toLocaleDateString("zh-CN") : "—"}</span></div>
           <div class="kv"><span class="k">当前草稿</span><span class="v">${Store.draft.items.length} 件</span></div>
           <div class="btn-row mt14">
-            <button class="btn btn-g" data-act="export">⬇️ 导出 JSON</button>
-            <button class="btn btn-line" data-act="import">⬆️ 导入 JSON</button>
-            <button class="btn btn-line" style="color:var(--bad)" data-act="reset">🗑 清空全部</button>
+            <button class="btn btn-g" data-act="export">导出 JSON</button>
+            <button class="btn btn-line" data-act="import">导入 JSON</button>
+            <button class="btn btn-line" style="color:var(--bad)" data-act="reset">清空全部数据</button>
           </div>
           <input type="file" id="import-file" accept=".json,application/json" style="display:none">
         </div>
       </div>
 
       <div class="card">
-        <div class="card-h"><h2>🍔 关于</h2><span class="hint">v1.0.0</span></div>
+        <div class="card-h"><h2>关于</h2><span class="hint">v1.0.0</span></div>
         <div class="card-b">
           <div class="kv"><span class="k">产品</span><span class="v">麦麦场景营养师 McFit Coach</span></div>
           <div class="kv"><span class="k">数据来源</span><span class="v" style="font-weight:600">麦当劳官方 MCP · list-nutrition-foods</span></div>

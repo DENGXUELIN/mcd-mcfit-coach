@@ -112,7 +112,7 @@ const App = (() => {
         const r = Engine.recommend(Store.draft.goals);
         if (!r) { toast("请先设置目标", "warn"); break; }
         Store.loadDraft(r.items, Store.draft.scenarioKey, Store.draft.goals);
-        toast("✨ 已生成推荐组合");
+        toast("已生成推荐组合");
         break;
       }
       case "clearDraft": {
