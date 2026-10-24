@@ -1,5 +1,5 @@
 /* 麦麦场景营养师 Service Worker — 离线可用 */
-const CACHE = "mcfit-coach-v3";
+const CACHE = "mcfit-coach-v4";
 const ASSETS = [
   "./",
   "./index.html",

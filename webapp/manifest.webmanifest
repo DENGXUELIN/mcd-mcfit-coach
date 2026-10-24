@@ -6,8 +6,8 @@
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "background_color": "#FFFDF7",
-  "theme_color": "#DA291C",
+  "background_color": "#F4EFE3",
+  "theme_color": "#FFC72C",
   "lang": "zh-CN",
   "categories": ["food", "health", "utilities"],
   "icons": [
