@@ -1,19 +1,21 @@
 /* ============================================================
  * 视图三：报告中心（Report）
- * 记录切换 · 营养成分四格 · 雷达/供能环 · 营养师点评 · 明细表 · 7 日趋势
+ * v5 现代品牌风：选择 chips · 统计四格 · 图表卡 · 深色点评 · 明细表 · 趋势
  * ============================================================ */
 
 Views.report = (() => {
 
   let selectedId = null; // null = 当前草稿
 
-  const ARCHES = `<svg viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 17V7c0-2.8 2.2-5 5-5s5 2.2 5 5v10"/><path d="M12 17V7c0-2.8 2.2-5 5-5s5 2.2 5 5v10"/></svg>`;
+  const VERDICT_CLASS = { ok: "good", warn: "warn", bad: "bad" };
+  const VERDICT_BADGE = { ok: "b-ok", warn: "b-warn", bad: "b-bad" };
   const GLYPH = { ok: "√", warn: "!", bad: "×" };
-  const VERDICT_CLASS = { ok: "b-ok", warn: "b-warn", bad: "b-bad" };
 
-  function sec(title, meta) {
-    return `<div class="sec reveal"><span class="mark">${ARCHES}</span><span class="sec-title">${title}</span>${meta ? `<span class="sec-meta">${meta}</span>` : ""}</div>`;
-  }
+  const FOOT = `
+    <div style="margin-top:34px;padding:16px 4px;border-top:1px solid var(--line);font-size:11.5px;color:var(--faint);line-height:1.8">
+      本应用为 WorkBuddy「1024 造物挑战」参赛作品，非麦当劳官方产品。<br/>
+      营养数据来自麦当劳官方 MCP（list-nutrition-foods）实时快照；报告仅作饮食参考，不构成医疗或营养建议。
+    </div>`;
 
   function render() {
     const el = document.getElementById("view-report");
@@ -34,14 +36,12 @@ Views.report = (() => {
     if (!options.length) {
       el.innerHTML = `
         <div class="empty reveal">
-          <div class="et">还没有可报告的数据</div>
-          <div class="ed">去配餐台组合一份套餐并保存，这里就会生成完整营养报告</div>
-          <button class="btn btn-y" data-act="nav" data-view="plan">去配餐</button>
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></div>
+          <div class="t">还没有可报告的数据</div>
+          <div class="s">去配餐台组合一份套餐并保存，这里就会生成完整营养报告</div>
+          <button class="btn btn-primary mt14" data-act="nav" data-view="plan">去配餐</button>
         </div>
-        <div class="foot-note">
-          本应用为 WorkBuddy「1024 造物挑战」参赛作品，非麦当劳官方产品。<br/>
-          营养数据来自麦当劳官方 MCP（list-nutrition-foods）2026-10-24 实时快照；报告仅作饮食参考，不构成医疗或营养建议。
-        </div>`;
+        ${FOOT}`;
       return;
     }
 
@@ -61,127 +61,107 @@ Views.report = (() => {
     const dt = new Date(src.ts);
 
     el.innerHTML = `
-      <div class="sec reveal"><span class="mark">${ARCHES}</span><span class="sec-title">选择要报告的数据</span></div>
-      <div class="scen-row reveal">
-        ${options.map(o => `<button class="chip ${o.id === selectedId ? "on" : ""}" data-act="pickRecord" data-id="${o.id === null ? "" : o.id}">${o.label}</button>`).join("")}
+      <div class="sec-title reveal"><span>选择要报告的数据</span><span class="en">SOURCE</span></div>
+      <div class="scen-scroll reveal">
+        ${options.map(o => `<button class="scen-chip ${o.id === selectedId ? "on" : ""}" data-act="pickRecord" data-id="${o.id === null ? "" : o.id}"><span class="n">${o.label}</span></button>`).join("")}
       </div>
 
-      <div class="label-block reveal mt14">
-        <div class="report-head">
-          <div class="t">
-            <h3>${sc.n}营养报告 ${src.isDraft ? "（草稿）" : ""}</h3>
-            <div class="d">${dt.getFullYear()} 年 ${dt.getMonth() + 1} 月 ${dt.getDate()} 日 ${String(dt.getHours()).padStart(2, "0")}:${String(dt.getMinutes()).padStart(2, "0")} · ${src.items.length} 件餐品</div>
+      <div class="card reveal mt14">
+        <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap">
+          <div style="flex:1;min-width:200px">
+            <h3 style="font-size:18px;font-weight:800;letter-spacing:.2px">${sc.n}营养报告 ${src.isDraft ? '<span style="font-size:12px;color:var(--muted);font-weight:600">（当前草稿）</span>' : ""}</h3>
+            <div style="font-size:12.5px;color:var(--muted);margin-top:4px">${dt.getFullYear()} 年 ${dt.getMonth() + 1} 月 ${dt.getDate()} 日 ${String(dt.getHours()).padStart(2, "0")}:${String(dt.getMinutes()).padStart(2, "0")} · ${src.items.length} 件餐品</div>
           </div>
-          <span class="badge ${VERDICT_CLASS[verdicts.kcal] || ""}">${Engine.VERDICT_TEXT[verdicts.kcal]}</span>
+          <span class="badge ${VERDICT_BADGE[verdicts.kcal] || ""}">${Engine.VERDICT_TEXT[verdicts.kcal]}</span>
         </div>
 
-        <div class="stat-grid">
-          ${stat("热量", "kcal", t.kcal, g.kcal, verdicts.kcal, "≤")}
-          ${stat("蛋白质", "protein", t.protein, g.protein, verdicts.protein, "≥")}
-          ${stat("脂肪", "fat", t.fat, g.fat, verdicts.fat, "≤")}
-          ${stat("钠", "sodium", t.sodium, g.sodium, verdicts.sodium, "≤")}
-        </div>
-
-        <div class="lb-body">
-          ${lrow("热量", t.kcal, g.kcal, "kcal", verdicts.kcal)}
-          ${lrow("蛋白质", t.protein, g.protein, "g", verdicts.protein)}
-          ${lrow("脂肪", t.fat, g.fat, "g", verdicts.fat)}
-          ${lrow("钠", t.sodium, g.sodium, "mg", verdicts.sodium)}
-        </div>
-
-        <div class="trend-grid">
-          <div class="trend-cell">
-            <h4>营养均衡雷达</h4>
-            <div class="chart-box"><canvas id="chart-radar" height="230"></canvas></div>
-          </div>
-          <div class="trend-cell">
-            <h4>供能占比 <span class="text-faint" style="font-weight:400">蛋白4·脂肪9·碳水4 kcal/g</span></h4>
-            <div class="chart-box"><canvas id="chart-ring" height="230"></canvas></div>
-          </div>
-        </div>
-
-        <div class="note-dark">
-          <b>营养师点评</b>
-          ${notes.map(n => `<span class="t-${n.t}">${n.t === "good" ? "√" : n.t === "bad" ? "×" : n.t === "warn" ? "!" : "·"}</span> ${n.x}`).join("<br/>")}
-          ${actions.length ? `<div class="actions">下一步：<br/>${actions.map(a => "· " + a).join("<br/>")}</div>` : ""}
-        </div>
-
-        <div class="lb-body">
-          <div class="tbl-wrap" style="padding:0">
-            <table>
-              <thead><tr><th>餐品</th><th class="num">数量</th><th class="num">热量</th><th class="num">蛋白</th><th class="num">脂肪</th><th class="num">碳水</th><th class="num">钠</th></tr></thead>
-              <tbody>
-                ${src.items.map(it => { const m = MENU_BY_NAME[it.name]; return m ? `<tr>
-                  <td>${m.name}</td><td class="num">×${it.qty}</td>
-                  <td class="num">${m.kcal * it.qty}</td><td class="num">${m.protein * it.qty}</td>
-                  <td class="num">${m.fat * it.qty}</td><td class="num">${m.carb * it.qty}</td>
-                  <td class="num">${m.sodium * it.qty}</td></tr>` : ""; }).join("")}
-                <tr class="total-row">
-                  <td>合计</td><td class="num"></td>
-                  <td class="num">${t.kcal}</td><td class="num">${t.protein}</td>
-                  <td class="num">${t.fat}</td><td class="num">${t.carb}</td><td class="num">${t.sodium}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="btn-row mt14 no-print">
-            <button class="btn btn-g" data-act="printReport">打印 / 存 PDF</button>
-            <button class="btn btn-line" data-act="copyReport">复制文字版</button>
-            ${src.isDraft ? "" : `<button class="btn btn-line" style="color:var(--red)" data-act="delRecord" data-id="${src.id}">删除记录</button>`}
-          </div>
+        <div class="stat-grid mt20">
+          ${stat("热量", t.kcal, g.kcal, verdicts.kcal, "≤")}
+          ${stat("蛋白质", t.protein, g.protein, verdicts.protein, "≥")}
+          ${stat("脂肪", t.fat, g.fat, verdicts.fat, "≤")}
+          ${stat("钠", t.sodium, g.sodium, verdicts.sodium, "≤")}
         </div>
       </div>
 
-      ${sec("近 7 日趋势")}
-      <div class="label-block reveal">
-        <div class="trend-grid" style="border-top:0">
-          <div class="trend-cell">
-            <h4>每日热量 vs 目标</h4>
-            <div class="chart-box"><canvas id="chart-trend-kcal" height="200"></canvas></div>
-            <div class="hint">虚线为当日记录自带目标</div>
-          </div>
-          <div class="trend-cell">
-            <h4>每日钠摄入 vs 上限</h4>
-            <div class="chart-box"><canvas id="chart-trend-sodium" height="200"></canvas></div>
-            <div class="hint">无记录的日子不计入</div>
-          </div>
-        </div>
+      <div class="chart-card reveal mt14">
+        <div class="h">营养均衡雷达 <span class="en">RADAR</span></div>
+        <div class="sub">本餐各项摄入相对目标的比例，1.0 = 刚好达标</div>
+        <div class="chart-box"><canvas id="chart-radar" height="230"></canvas></div>
       </div>
 
-      <div class="foot-note">
-        本应用为 WorkBuddy「1024 造物挑战」参赛作品，非麦当劳官方产品。<br/>
-        营养数据来自麦当劳官方 MCP（list-nutrition-foods）2026-10-24 实时快照；报告仅作饮食参考，不构成医疗或营养建议。
+      <div class="chart-card reveal">
+        <div class="h">供能占比 <span class="en">MACRO SPLIT</span></div>
+        <div class="sub">蛋白 4 · 脂肪 9 · 碳水 4 kcal/g</div>
+        <div class="chart-box"><canvas id="chart-ring" height="230"></canvas></div>
       </div>
+
+      <div class="note-dark reveal">
+        <div class="h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3z"/></svg>营养师点评</div>
+        <div class="b">${notes.map(n => `<span class="t-${n.t}">${GLYPH[n.t] || "·"}</span> ${n.x}`).join("<br/>")}
+        ${actions.length ? `<div class="actions">下一步：${actions.map(a => a).join(" · ")}</div>` : ""}</div>
+      </div>
+
+      <div class="sec-title reveal"><span>餐品明细</span><span class="en">DETAIL</span></div>
+      <div class="tbl-wrap reveal">
+        <table class="tbl">
+          <thead><tr><th>餐品</th><th>数量</th><th>热量</th><th>蛋白</th><th>脂肪</th><th>碳水</th><th>钠</th></tr></thead>
+          <tbody>
+            ${src.items.map(it => { const m = MENU_BY_NAME[it.name]; return m ? `<tr>
+              <td>${m.name}</td><td>×${it.qty}</td>
+              <td>${m.kcal * it.qty}</td><td>${m.protein * it.qty}</td>
+              <td>${m.fat * it.qty}</td><td>${m.carb * it.qty}</td>
+              <td>${m.sodium * it.qty}</td></tr>` : ""; }).join("")}
+            <tr class="total-row">
+              <td>合计</td><td></td>
+              <td>${t.kcal}</td><td>${t.protein}</td>
+              <td>${t.fat}</td><td>${t.carb}</td><td>${t.sodium}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="btn-row mt14">
+        <button class="btn btn-line" data-act="printReport">打印 / 存 PDF</button>
+        <button class="btn btn-ghost" data-act="copyReport">复制文字版</button>
+        ${src.isDraft ? "" : `<button class="btn btn-danger" data-act="delRecord" data-id="${src.id}">删除记录</button>`}
+      </div>
+
+      <div class="sec-title reveal"><span>近 7 日趋势</span><span class="en">7-DAY TREND</span></div>
+      <div class="chart-card reveal">
+        <div class="h">每日热量 vs 目标 <span class="en">KCAL</span></div>
+        <div class="sub">虚线为当日记录自带目标</div>
+        <div class="chart-box"><canvas id="chart-trend-kcal" height="200"></canvas></div>
+      </div>
+      <div class="chart-card reveal">
+        <div class="h">每日钠摄入 vs 上限 <span class="en">SODIUM</span></div>
+        <div class="sub">无记录的日子不计入</div>
+        <div class="chart-box"><canvas id="chart-trend-sodium" height="200"></canvas></div>
+      </div>
+
+      ${FOOT}
     `;
 
     drawCharts(t, g, src);
   }
 
-  /* 营养成分四格：一个面板内的发丝线分格，非漂浮卡片 */
-  function stat(label, key, val, goal, v, prefix) {
+  /* 营养成分四格 */
+  function stat(label, val, goal, v, prefix) {
     const pct = goal ? Math.min(100, val / goal * 100) : 0;
-    return `<div class="stat-cell">
-      <div class="sl">${label} ${prefix} ${goal}</div>
-      <div class="sv ${v}">${val}</div>
-      <div class="ss">${Engine.VERDICT_TEXT[v]} · ${Math.round(pct)}%</div>
-      <div class="track"><div class="fill ${v}" style="width:${pct}%"></div></div>
-    </div>`;
-  }
-
-  /* 点线引导行 */
-  function lrow(k, val, goal, unit, v) {
-    return `<div class="lrow" style="padding-left:0;padding-right:0">
-      <span class="k">${k}</span><span class="leader"></span>
-      <span class="v">${val} / ${goal}</span><span class="u">${unit}</span>
-      <span class="vd ${v}">${GLYPH[v] || "·"}</span>
+    const cls = VERDICT_CLASS[v] || "";
+    return `<div class="stat ${cls}">
+      <div class="n">${label} <span style="font-weight:600;color:var(--faint)">${prefix} ${goal}</span></div>
+      <b>${val}</b>
+      <div class="u">${Engine.VERDICT_TEXT[v]} · ${Math.round(pct)}%</div>
     </div>`;
   }
 
   function drawCharts(t, g, src) {
     if (typeof Chart === "undefined") return;
-    /* 图表换肤：等宽刻度 + 发丝网格 + 油墨/红/黄单色系 */
-    Chart.defaults.font.family = "'IBM Plex Mono', monospace";
-    Chart.defaults.color = "#5E584A";
+    /* 图表换肤：白底 + 品牌红/黄 + 语义色 */
+    Chart.defaults.font.family = "'Outfit', 'Noto Sans SC', sans-serif";
+    Chart.defaults.color = "#5F6670";
+
+    const INK = "#1A1D21", RED = "#DA291C", YEL = "#F0B400", GRAY = "#B4BAC2", GRID = "#F0F1F4";
 
     // 雷达
     const ratio = v => +(v).toFixed(3);
@@ -191,19 +171,19 @@ Views.report = (() => {
         labels: ["热量", "蛋白质", "脂肪", "钠"],
         datasets: [
           { label: "本餐 / 目标", data: [ratio(t.kcal / g.kcal), ratio(t.protein / g.protein), ratio(t.fat / g.fat), ratio(t.sodium / g.sodium)],
-            borderColor: "#C8102E", backgroundColor: "rgba(200,16,46,.10)", pointBackgroundColor: "#C8102E", borderWidth: 2 },
-          { label: "目标基准", data: [1, 1, 1, 1], borderColor: "#9A9484", backgroundColor: "rgba(154,148,132,.04)", borderDash: [4, 4], pointRadius: 0, borderWidth: 1 }
+            borderColor: RED, backgroundColor: "rgba(218,41,28,.08)", pointBackgroundColor: RED, borderWidth: 2, pointRadius: 3 },
+          { label: "目标基准", data: [1, 1, 1, 1], borderColor: GRAY, backgroundColor: "rgba(180,186,194,.03)", borderDash: [4, 4], pointRadius: 0, borderWidth: 1 }
         ]
       },
       options: {
         responsive: true,
-        scales: { r: { min: 0, max: 1.4, grid: { color: "#DCD4C0" }, angleLines: { color: "#DCD4C0" },
-          pointLabels: { color: "#1B1712", font: { size: 12, weight: "600" } }, ticks: { display: false } } },
-        plugins: { legend: { labels: { color: "#5E584A", font: { size: 11 }, boxWidth: 12 } } }
+        scales: { r: { min: 0, max: 1.4, grid: { color: GRID }, angleLines: { color: GRID },
+          pointLabels: { color: INK, font: { size: 12, weight: "700" } }, ticks: { display: false } } },
+        plugins: { legend: { labels: { color: "#5F6670", font: { size: 11 }, boxWidth: 12 } } }
       }
     }));
 
-    // 供能占比环：纸墨 + 单色黄（配色纪律：不用平均分配的彩色）
+    // 供能占比环：品牌红 + 黄 + 灰（配色纪律：不用平均分配的彩色）
     const pK = t.protein * 4, pF = t.fat * 9, pC = t.carb * 4, pAll = pK + pF + pC || 1;
     const centerText = {
       id: "centerText",
@@ -212,11 +192,11 @@ Views.report = (() => {
         const x = (chartArea.left + chartArea.right) / 2, y = (chartArea.top + chartArea.bottom) / 2;
         ctx.save();
         ctx.textAlign = "center"; ctx.textBaseline = "middle";
-        ctx.fillStyle = "#1B1712";
-        ctx.font = "900 22px 'Noto Serif SC', serif";
-        ctx.fillText(t.kcal + "", x, y - 9);
-        ctx.fillStyle = "#5E584A";
-        ctx.font = "500 10px 'IBM Plex Mono', monospace";
+        ctx.fillStyle = INK;
+        ctx.font = "800 26px 'Outfit', sans-serif";
+        ctx.fillText(t.kcal + "", x, y - 10);
+        ctx.fillStyle = "#6B7280";
+        ctx.font = "600 10px 'Outfit', sans-serif";
         ctx.fillText("kcal 总热量", x, y + 12);
         ctx.restore();
       }
@@ -227,14 +207,14 @@ Views.report = (() => {
         labels: ["蛋白质", "脂肪", "碳水"],
         datasets: [{
           data: [pK, pF, pC],
-          backgroundColor: ["#FFC72C", "#1B1712", "#9A9484"],
-          borderWidth: 2, borderColor: "#FBF8F0", hoverOffset: 6
+          backgroundColor: [RED, YEL, GRAY],
+          borderWidth: 3, borderColor: "#fff", hoverOffset: 6
         }]
       },
       options: {
-        responsive: true, cutout: "68%",
+        responsive: true, cutout: "70%",
         plugins: {
-          legend: { position: "bottom", labels: { color: "#5E584A", font: { size: 11 }, boxWidth: 12 } },
+          legend: { position: "bottom", labels: { color: "#5F6670", font: { size: 11 }, boxWidth: 12 } },
           tooltip: { callbacks: { label: c => ` ${c.label} ${Math.round(c.raw / pAll * 100)}%（${Math.round(c.raw)} kcal）` } }
         }
       },
@@ -248,11 +228,11 @@ Views.report = (() => {
       responsive: true,
       interaction: { mode: "index", intersect: false },
       scales: {
-        x: { grid: { display: false }, ticks: { color: "#6F6756", font: { size: 10 } } },
-        y: { beginAtZero: true, grid: { color: "#E8E2D2" }, ticks: { color: "#6F6756", font: { size: 10 } } }
+        x: { grid: { display: false }, ticks: { color: "#6B7280", font: { size: 10, family: "'Outfit', sans-serif" } } },
+        y: { beginAtZero: true, grid: { color: GRID }, ticks: { color: "#6B7280", font: { size: 10, family: "'Outfit', sans-serif" } } }
       },
       plugins: {
-        legend: { labels: { color: "#5E584A", font: { size: 10 }, boxWidth: 12 } },
+        legend: { labels: { color: "#5F6670", font: { size: 10 }, boxWidth: 12 } },
         tooltip: { callbacks: { label: c => ` ${c.dataset.label}: ${Math.round(c.raw)}` } }
       }
     });
@@ -262,10 +242,10 @@ Views.report = (() => {
       data: {
         labels: days,
         datasets: [
-          { label: "热量 kcal", data: trend.map(d => d.hasData ? d.kcal : null), borderColor: "#C8102E",
-            backgroundColor: "rgba(200,16,46,.06)", fill: true, tension: .3, spanGaps: true, pointRadius: 4, pointBackgroundColor: "#C8102E" },
-          { label: "目标 kcal", data: trend.map(d => d.goalKcal || null), borderColor: "#9A9484",
-            borderDash: [5, 4], pointRadius: 0, tension: 0 }
+          { label: "热量 kcal", data: trend.map(d => d.hasData ? d.kcal : null), borderColor: RED,
+            backgroundColor: "rgba(218,41,28,.07)", fill: true, tension: .35, spanGaps: true, pointRadius: 4, pointBackgroundColor: RED, borderWidth: 2.5 },
+          { label: "目标 kcal", data: trend.map(d => d.goalKcal || null), borderColor: GRAY,
+            borderDash: [5, 4], pointRadius: 0, tension: 0, borderWidth: 1.5 }
         ]
       },
       options: lineOpts()
@@ -276,8 +256,8 @@ Views.report = (() => {
       data: {
         labels: days,
         datasets: [
-          { label: "钠 mg", data: trend.map(d => d.hasData ? d.sodium : null), backgroundColor: trend.map(d => d.goalSodium && d.sodium > d.goalSodium ? "#C8102E" : "#1E7A46"), borderRadius: 2, barPercentage: .6 },
-          { label: "上限 mg", data: trend.map(d => d.goalSodium || null), type: "line", borderColor: "#9A9484", borderDash: [5, 4], pointRadius: 0, tension: 0 }
+          { label: "钠 mg", data: trend.map(d => d.hasData ? d.sodium : null), backgroundColor: trend.map(d => d.goalSodium && d.sodium > d.goalSodium ? "#E5484D" : "#0E9F5A"), borderRadius: 5, barPercentage: .55 },
+          { label: "上限 mg", data: trend.map(d => d.goalSodium || null), type: "line", borderColor: GRAY, borderDash: [5, 4], pointRadius: 0, tension: 0, borderWidth: 1.5 }
         ]
       },
       options: lineOpts()

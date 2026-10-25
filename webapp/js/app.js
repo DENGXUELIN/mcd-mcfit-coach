@@ -49,8 +49,9 @@ const App = (() => {
     t.className = "toast " + type;
     t.textContent = msg;
     root.appendChild(t);
-    setTimeout(() => { t.style.opacity = "0"; t.style.transition = "opacity .3s"; }, 2200);
-    setTimeout(() => t.remove(), 2600);
+    requestAnimationFrame(() => requestAnimationFrame(() => t.classList.add("show")));
+    setTimeout(() => t.classList.remove("show"), 2400);
+    setTimeout(() => t.remove(), 2800);
   }
 
   /* ---------- modal ---------- */
@@ -62,10 +63,12 @@ const App = (() => {
           <h3>${title}</h3>
           <div class="modal-body">${body}</div>
           <div class="modal-actions">
-            ${actions.map((a, i) => `<button class="btn ${a.style || "btn-g"}" data-modal-btn="${i}">${a.label}</button>`).join("")}
+            ${actions.map((a, i) => `<button class="btn ${a.style || "btn-ghost"}" data-modal-btn="${i}">${a.label}</button>`).join("")}
           </div>
         </div>
       </div>`;
+    const mask = root.querySelector(".modal-mask");
+    requestAnimationFrame(() => requestAnimationFrame(() => mask.classList.add("show")));
     return new Promise(resolve => {
       root.querySelectorAll("[data-modal-btn]").forEach(btn => {
         btn.addEventListener("click", () => {
@@ -74,20 +77,23 @@ const App = (() => {
           resolve(a ? a.value : null);
         });
       });
-      root.querySelector(".modal-mask").addEventListener("click", e => {
+      mask.addEventListener("click", e => {
         if (e.target.hasAttribute("data-act")) { close(); resolve(null); }
       });
-      function close() { root.innerHTML = ""; }
+      function close() {
+        mask.classList.remove("show");
+        setTimeout(() => { root.innerHTML = ""; }, 220);
+      }
     });
   }
 
   function confirmDialog(title, msg, danger = false) {
     return modal({
       title,
-      body: `<p class="text-muted" style="font-size:14px">${msg}</p>`,
+      body: `<p class="text-muted" style="font-size:14px;line-height:1.7">${msg}</p>`,
       actions: [
-        { label: "取消", style: "btn-g", value: false },
-        { label: "确认", style: danger ? "btn-r" : "btn-y", value: true }
+        { label: "取消", style: "btn-ghost", value: false },
+        { label: "确认", style: danger ? "btn-danger" : "btn-primary", value: true }
       ]
     });
   }
